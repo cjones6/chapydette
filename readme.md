@@ -1,17 +1,19 @@
 Chapydette
 ====================================
 
-Chapydette contains fast Cython implementations of kernel-based change-point detection algorithms and feature generation methods. This is version 0.1, as there are more algorithms to be added in the future. There are currently two algorithms implemented:
+Chapydette contains fast Cython implementations of kernel-based change-point detection algorithms and feature generation methods. There are currently two algorithms implemented:
 
 * The kernel change-point algorithm of Harchaoui and Cappé (2007), which detects a fixed number of change-points in a sequence of observations.
 * A change-point algorithm based on the Maximum Mean Discrepancy (Gretton et al., 2012) to detect a single change-point. This algorithm is based on Harchaoui et al. (2009).
 
-See the full [documentation](www.stat.washington.edu/~cjones6/software/chapydette/) for more details.
+See the full [documentation](http://www.stat.washington.edu/~cjones6/software/chapydette/) for more details.
 
 Installation
 -----------------
 
-To install the package, run `python setup.py install` from the installation directory, with `sudo` if necessary. This code was written using Python 2.7 and requires Cython. It has been only tested on 64-bit Linux, but is probably compatible with other platforms. The installer will check whether you have the remainder of the required dependencies. There are three optional dependencies:
+To install the package, run `python setup.py install` from the installation directory, with `sudo` if necessary. This code was written using Python 2.7 and requires Cython. It is not compatible with Python 3 and has been only tested on 64-bit Linux. 
+
+The installer will check whether you have the remainder of the required dependencies. There are three optional dependencies:
 
 * Faiss https://github.com/facebookresearch/faiss
 * Yael http://yael.gforge.inria.fr/
