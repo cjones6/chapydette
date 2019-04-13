@@ -11,10 +11,10 @@ See the full [documentation](http://www.stat.washington.edu/~cjones6/software/ch
 Installation
 -----------------
 This code was written using Python 2.7 and requires Cython and Numpy. If you are using Anaconda you can install these via  
-` conda install cython numpy`
+` conda install cython numpy`  
 If you are using a Mac, you should also install llvm, gcc, and libgcc:  
-`conda install llvm gcc libgcc`
-To then install this package, run 
+`conda install llvm gcc libgcc`  
+To then install this package, run   
 `python setup.py install`   
 from the installation directory. 
 
