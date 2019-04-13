@@ -10,8 +10,13 @@ See the full [documentation](http://www.stat.washington.edu/~cjones6/software/ch
 
 Installation
 -----------------
+This code was written using Python 2.7 and requires Cython and Numpy. If you are using Anaconda you can install these via
+` conda install cython numpy`
+If you are using a Mac, you should also install llvm, gcc, and libgcc:
+`conda install llvm gcc libgcc`
+To then install this package, run `python setup.py install` from the installation directory. 
 
-To install the package, run `python setup.py install` from the installation directory, with `sudo` if necessary. This code was written using Python 2.7 and requires Cython. It is not compatible with Python 3 and has been only tested on 64-bit Linux. 
+This code is not compatible with Python 3 and has not been tested on a Windows operating system.
 
 The installer will check whether you have the remainder of the required dependencies. There are three optional dependencies:
 
