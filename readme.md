@@ -38,7 +38,7 @@ There are two tasks that Chapydette can perform:
 
 The functions for the former are contained in feature_generation.py, while the functions for the latter are in cp_estimation.py. Examples of how to use Chapydette are provided in the ipython notebook in the examples directory.
 
-Author
+Authors
 -----------------
 [Corinne Jones](https://www.stat.washington.edu/people/cjones6/)  
 [Zaid Harchaoui](http://faculty.washington.edu/zaid/)
