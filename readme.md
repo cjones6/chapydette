@@ -41,6 +41,7 @@ The functions for the former are contained in feature_generation.py, while the f
 Author
 -----------------
 [Corinne Jones](https://www.stat.washington.edu/people/cjones6/)  
+[Zaid Harchaoui](http://faculty.washington.edu/zaid/)
 
 License
 -----------------
