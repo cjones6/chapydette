@@ -6,7 +6,7 @@ Chapydette contains fast Cython implementations of kernel-based change-point det
 * The kernel change-point algorithm of Harchaoui and Cappé (2007), which detects a fixed number of change-points in a sequence of observations.
 * A change-point algorithm based on the Maximum Mean Discrepancy (Gretton et al., 2012) to detect a single change-point. This algorithm is based on Harchaoui et al. (2009).
 
-See the full [documentation](http://www.stat.washington.edu/~cjones6/software/chapydette/) for more details.
+See the full [documentation](http://www.stat.washington.edu/~cjones6/software/chapydette/) for more details. A future release will include data-driven model selection procedures.
 
 Installation
 -----------------
@@ -50,6 +50,7 @@ This code has a GPLv3 license.
 References
 -----------------
 
-- Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf, B., & Smola, A. (2012). A kernel two-sample test. Journal of Machine Learning Research, 13(Mar), 723-773.  
-- Harchaoui, Z., & Cappé, O. (2007, August). Retrospective multiple change-point estimation with kernels. In IEEE/SP 14th Workshop on Statistical Signal Processing, 2007. SSP'07. (pp. 768-772). IEEE.  
-- Harchaoui, Z., Moulines, E., & Bach, F. R. (2009). Kernel change-point analysis. In Advances in Neural Information Processing Systems (pp. 609-616).
+- S. Arlot, A. Celisse, and Z. Harchaoui, "A kernel multiple change-point algorithm via model selection," *Journal of Machine Learning Research (to appear)*.  
+- A. Gretton, K.M. Borgwardt, M.J. Rasch, B. Schölkopf, and A. Smola, "A kernel two-sample test," *Journal of Machine Learning Research*, vol. 13, pp. 723–773, 2012.  
+- Z. Harchaoui and O. Cappé, "Retrospective mutiple change-point estimation with kernels," in *IEEE Workshop on Statistical Signal Processing*, 2007, pp. 768–772.  
+- Z. Harchaoui, F.R. Bach, and E. Moulines, "Kernel change-point analysis," in *Advances in Neural Information Processing Systems*, 2008, pp. 609–616.
