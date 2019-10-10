@@ -3,10 +3,12 @@ Chapydette
 
 Chapydette contains fast Cython implementations of kernel-based change-point detection algorithms and feature generation methods. There are currently two algorithms implemented:
 
-* The kernel change-point algorithm of Harchaoui and Cappé (2007), which detects a fixed number of change-points in a sequence of observations.
-* A change-point algorithm based on the Maximum Mean Discrepancy (Gretton et al., 2012) to detect a single change-point. This algorithm is based on Harchaoui et al. (2009).
+* The kernel change-point algorithm of Harchaoui and Cappé (2007), which detects a fixed number of change points in a sequence of observations.
+* The change-point analysis algorithm of Harchaoui, Bach, and Moulines (2009), which detects the presence of and estimates the location of a single change point based on the Maximum Mean Discrepancy (Gretton et al., 2012).
 
-See the full [documentation](http://www.stat.washington.edu/~cjones6/software/chapydette/) for more details. A future release will include data-driven model selection procedures.
+See the full [documentation](http://www.stat.washington.edu/~cjones6/software/chapydette/) for more details. The next release will include the following additions:  
+- A data-driven model selection procedure based on Arlot, Celisse, and Harchaoui (2019), which allows one to automatically select the number of change points.
+- Python 3 compatibility.
 
 Installation
 -----------------
