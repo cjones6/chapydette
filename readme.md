@@ -6,21 +6,20 @@ Chapydette contains fast Cython implementations of kernel-based change-point det
 * The kernel change-point algorithm of Harchaoui and Cappé (2007), which detects a fixed number of change points in a sequence of observations.
 * The change-point analysis algorithm of Harchaoui, Bach, and Moulines (2009), which detects the presence of and estimates the location of a single change point based on the Maximum Mean Discrepancy (Gretton et al., 2012).
 
-See the full [documentation](http://www.stat.washington.edu/~cjones6/software/chapydette/) for more details. The next release will include the following additions:  
+See the full [documentation](http://www.stat.washington.edu/~cjones6/software/chapydette/) for more details. The next release will include the following addition:  
 - A data-driven model selection procedure based on Arlot, Celisse, and Harchaoui (2019), which allows one to automatically select the number of change points.
-- Python 3 compatibility.
 
 Installation
 -----------------
-This code was written using Python 2.7 and requires Cython and Numpy. If you are using Anaconda you can install these via  
-` conda install cython numpy`  
+This code was written using Python 3.7 and requires Cython, Numpy, and Scikit-learn. If you are using Anaconda you can install these via  
+` conda install cython numpy scikit-learn`  
 If you are using a Mac, you should also install llvm, gcc, and libgcc:  
 `conda install llvm gcc libgcc`  
 To then install this package, run   
 `python setup.py install`   
 from the installation directory. 
 
-This code is not compatible with Python 3 and has not been tested on a Windows operating system.
+This code has not been tested on a Windows operating system.
 
 The installer will check whether you have the remainder of the required dependencies. There are three optional dependencies:
 
@@ -38,7 +37,7 @@ There are two tasks that Chapydette can perform:
 1. Feature generation
 2. Change-point estimation
 
-The functions for the former are contained in feature_generation.py, while the functions for the latter are in cp_estimation.py. Examples of how to use Chapydette are provided in the ipython notebook in the examples directory.
+The functions for the former are contained in feature_generation.py, while the functions for the latter are in cp_estimation.py. Examples of how to use Chapydette are provided in the Jupyter notebook in the examples directory.
 
 Authors
 -----------------
