@@ -116,8 +116,8 @@ cpdef kcpe_forward_pass(np.ndarray[np.float64_t, ndim=2] X, int min_cp, int max_
     cdef long n = np.size(X, 0)
     cdef unsigned int d = np.size(X, 1)
     cdef long area_table_size = n*(n+1)/2
-    cdef double[:, ::1] I = np.inf*np.ones([n, max_cp], dtype=np.float64)
-    cdef double[:, ::1] N = np.inf*np.ones([n, max_cp], dtype=np.int)
+    cdef double[:, ::1] I = np.inf*np.ones([n+1, max_cp], dtype=np.float64)
+    cdef double[:, ::1] N = np.inf*np.ones([n+1, max_cp], dtype=np.int)
     cdef double* area_table_ptr = <double*> PyMem_Malloc(sizeof(double) * area_table_size)
     if not area_table_ptr:
         raise MemoryError()
@@ -140,19 +140,19 @@ cpdef kcpe_forward_pass(np.ndarray[np.float64_t, ndim=2] X, int min_cp, int max_
     compute_area_table(area_table, diag, X_contig, n, d, kernel_type, bw)
 
     # No changepoint case
-    for i in range(0, n-min_cp*min_dist+1):
+    for i in range(min_dist-1, n-(min_cp-1)*min_dist):
         # All but linear, precomputed kernels have 1 on the diagonal of the gram matrix
         if kernel_type != 4 and kernel_type != -1:
-            I[i, 0] = i+1 - 1.0/(i+1.0)*area_table[i*(i+1)/2+i]
+            I[i+1, 0] = i+1 - 1.0/(i+1.0)*area_table[i*(i+1)/2+i]
         else:
-            I[i, 0] = diag[i] - 1.0/(i+1.0)*area_table[i*(i+1)/2+i]
+            I[i+1, 0] = diag[i] - 1.0/(i+1.0)*area_table[i*(i+1)/2+i]
 
     with nogil:
         for j in range(1, max_cp):  # j: number of changepoints
-            i_end = n-long_max(<long> (min_cp-j)*min_dist-1, <int> 0)
-            for i in prange(j+1, i_end, schedule='dynamic', num_threads=num_threads):
+            i_end = n-long_max(<long> (min_cp-j-1)*min_dist, <int> 0)
+            for i in prange((j+1)*min_dist-1, i_end, schedule='dynamic', num_threads=num_threads):
                 t_end = long_max(<long>j, <long>(i + 1 - min_dist))
-                for t in range(j, t_end):  # t: possible location of next best changepoint
+                for t in range(j*min_dist-1, t_end):  # t: possible location of next best changepoint
                     if i > t+1:
                         if kernel_type != 4 and kernel_type != -1:
                             s = i-t - 1.0/(i-t)*(area_table[i*(i+1)/2+i]+area_table[(t+1)*t/2+t]-2*area_table[(i+1)*i/2+t])
@@ -161,10 +161,10 @@ cpdef kcpe_forward_pass(np.ndarray[np.float64_t, ndim=2] X, int min_cp, int max_
                     else:
                         s = 0
                     idx = <unsigned int>(j - 1)
-                    temp = I[t, idx] + s
-                    if I[i, j] > temp:
-                        I[i, j] = temp
-                        N[i, j] = t
+                    temp = I[t+1, idx] + s
+                    if I[i+1, j] > temp:
+                        I[i+1, j] = temp
+                        N[i+1, j] = t+1
 
     PyMem_Free(area_table_ptr)
     PyMem_Free(diag_ptr)
@@ -189,12 +189,14 @@ cpdef kcpe_backward_pass(double[:, ::1] N, double[:, ::1] I, int k, int n, int m
     cdef int[::1] T = np.zeros(k, dtype=np.int32)
     cdef unsigned int i
 
-    T[k - 2] = <int> N[n - min_dist, k - 1]
-    for i in range(k - 3, -1, -1):
-        T[i] = <int> N[T[i + 1], i + 1]
-    T[k - 1] = n-1
+    T[k - 1] = n
+    print(I[n, k-1])
+    for i in range(k - 1, 0, -1):
+        T[i-1] = <int> N[T[i], i]
+    for i in range(k, 0, -1):
+        T[i-1] = T[i-1]-1
 
-    return T, I[n - min_dist, k - 1]
+    return T, I[n, k-1]
 
 
 @cython.boundscheck(False)
@@ -289,6 +291,7 @@ cdef void fill_area_table(double[::1] S, double[::1] diag, double[::1] X, long n
             diag[i] = diag[i-1] + entry
         else:
             diag[i] = entry
+
 
 
 
