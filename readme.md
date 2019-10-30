@@ -11,8 +11,8 @@ See the full [documentation](http://www.stat.washington.edu/~cjones6/software/ch
 
 Installation
 -----------------
-This code was written using Python 3.7 and requires Cython, Numpy, and Scikit-learn. If you are using Anaconda you can install these via  
-` conda install cython numpy scikit-learn`  
+This code was written using Python 3.7 and requires Cython, Numpy, Scipy, and Scikit-learn. If you are using Anaconda you can install these via  
+` conda install cython numpy scipy scikit-learn`  
 If you are using a Mac, you should also install llvm, gcc, and libgcc:  
 `conda install llvm gcc libgcc`  
 To then install this package, run   
