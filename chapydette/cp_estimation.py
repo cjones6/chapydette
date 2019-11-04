@@ -13,8 +13,8 @@ import chapydette.mmd_cpd as run_mmd_cpd
 
 def mkcpe(X=None, gram=None, n_cp=1, kernel_type='detect', bw=None, min_dist=1, return_obj=False):
     """
-    Run the kernel changepoint algorithm of Harchaoui and Cappé (2007) to detect a fixed number n_cp of changepoints in
-    a sequence of observations.
+    Run the kernel change-point algorithm of Harchaoui and Cappé (2007) to detect a fixed number n_cp of change points
+    in a sequence of observations.
 
     Reference:
 
@@ -24,8 +24,8 @@ def mkcpe(X=None, gram=None, n_cp=1, kernel_type='detect', bw=None, min_dist=1, 
     :type X: numpy.ndarray
     :param gram: Pre-computed gram matrix
     :type gram: numpy.ndarray
-    :param n_cp: Number of changepoints to detect. Either an integer or tuple of integers containing the min and max of
-                an interval for the # changepoints to detect.
+    :param n_cp: Number of change points to detect. Either an integer or tuple of integers containing the min and max of
+                an interval for the # change points to detect.
     :type n_cp: int or array_like
     :param kernel_type: Type of kernel to use. One of: 'detect', 'precomputed', 'chi-squared', 'gaussian-euclidean',
                         'gaussian-hellinger', 'gaussian-tv', 'linear'. If 'detect', it chooses the Gaussian kernel with
@@ -33,11 +33,11 @@ def mkcpe(X=None, gram=None, n_cp=1, kernel_type='detect', bw=None, min_dist=1, 
     :type kernel_type: str
     :param bw: Bandwidth for the kernel (if applicable)
     :type bw: float
-    :param min_dist: Minimum allowable distance between successive changepoints (in terms of indices)
+    :param min_dist: Minimum allowable distance between successive change points (in terms of indices)
     :type min_dist: int
     :param return_obj: Whether to return the optimal objective value
     :type return_obj: bool
-    :return: cps: Indices of the estimated changepoints (the indices of the last element in each estimated segment)
+    :return: cps: Indices of the estimated change points (the indices of the last element in each estimated segment)
     :rtype: numpy.ndarray or dict of numpy.ndarrays
     """
 
@@ -65,7 +65,7 @@ def mkcpe(X=None, gram=None, n_cp=1, kernel_type='detect', bw=None, min_dist=1, 
 
 def mmd_cpd(X=None, gram=None, n_cp=1, kernel_type='detect', bw=None, min_dist=1):
     """
-    Run a changepoint algorithm based on the Maximum Mean Discrepancy to detect a single changepoint
+    Run a change point algorithm based on the Maximum Mean Discrepancy to detect a single change point
 
     References:
 
@@ -76,7 +76,7 @@ def mmd_cpd(X=None, gram=None, n_cp=1, kernel_type='detect', bw=None, min_dist=1
     :type X: numpy.ndarray
     :param gram: Pre-computed gram matrix
     :type gram: numpy.ndarray
-    :param n_cp: Number of changepoints to detect
+    :param n_cp: Number of change points to detect
     :type n_cp: int
     :param kernel_type: Type of kernel to use. One of: 'detect', 'precomputed', 'chi-squared', 'gaussian-euclidean',
                         'gaussian-hellinger', 'gaussian-tv', 'linear'. If 'detect', it chooses the Gaussian kernel with
@@ -84,13 +84,13 @@ def mmd_cpd(X=None, gram=None, n_cp=1, kernel_type='detect', bw=None, min_dist=1
     :type kernel_type: str
     :param bw: Bandwidth for the kernel (if applicable)
     :type bw: float
-    :param min_dist: Minimum allowable distance between successive changepoints (in terms of indices)
+    :param min_dist: Minimum allowable distance between successive change points (in terms of indices)
     :type min_dist: int
-    :return: cp: Index of the estimated changepoint (the index of the last element in the first segment)
+    :return: cp: Index of the estimated change point (the index of the last element in the first segment)
     :rtype: int
     """
     if n_cp != 1:
-        raise NotImplementedError('The method has only been implemented to detect one changepoint.')
+        raise NotImplementedError('The method has only been implemented to detect one change point.')
 
     kernel_num, bw, X = setup(X, gram, n_cp, kernel_type, bw, min_dist)
     if gram is None:
@@ -106,12 +106,12 @@ def setup(X, gram, n_cp, kernel_type, bw, min_dist):
     the bandwidth wasn't specified.
     :param X: Matrix of observations. Each observation is one row.
     :param gram: Pre-computed gram matrix
-    :param n_cp: Number of changepoints to detect
+    :param n_cp: Number of change points to detect
     :param kernel_type: Type of kernel to use. One of: 'detect', 'precomputed', 'chi-squared', 'gaussian-euclidean',
                         'gaussian-hellinger', 'gaussian-tv', 'linear'. If 'detect', it chooses the Gaussian kernel with
                         the Hellinger distance if the data consists of histograms and the linear kernel otherwise.
     :param bw: Bandwidth for the kernel (if applicable)
-    :param min_dist: Minimum allowable distance between successive changepoints
+    :param min_dist: Minimum allowable distance between successive change points
     :return: kernel_num: Value assigned to the specified kernel
              bw: Bandwidth to be used
     """
@@ -149,16 +149,16 @@ def setup(X, gram, n_cp, kernel_type, bw, min_dist):
 
     if isinstance(n_cp, int):
         if n_cp <= 0:
-            raise ValueError('Number of changepoints n_cp must be a positive integer.')
+            raise ValueError('Number of change points n_cp must be a positive integer.')
         max_cp = n_cp
     elif isinstance(n_cp, collections.Sequence):
         if not isinstance(n_cp[0], int) or not isinstance(n_cp[1], int):
-            raise ValueError('Number of changepoints n_cp[0] and n_cp[1] must be positive integers.')
+            raise ValueError('Number of change points n_cp[0] and n_cp[1] must be positive integers.')
         elif n_cp[1] < n_cp[0]:
             raise ValueError('n_cp[1] < n_cp[0] is not allowed.')
         max_cp = n_cp[1]
     else:
-        raise ValueError('Number of changepoints n_cp must be a positive integer.')
+        raise ValueError('Number of change points n_cp must be a positive integer.')
 
     if min_dist <= 0 or not isinstance(min_dist, int):
         raise ValueError('Minimum allowable distance min_dist, must be a positive integer.')

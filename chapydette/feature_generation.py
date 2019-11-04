@@ -7,16 +7,12 @@ import sklearn.cluster
 import sklearn.decomposition
 import sklearn.mixture
 import sklearn.preprocessing
+import torch
 
 try:
     import faiss
     print('Using Faiss')
     USE_FAISS = 1
-    try:
-        faiss.StandardGpuResources()
-        USE_GPU = True
-    except:
-        USE_GPU = False
 except:
     USE_FAISS = 0
     print('Not using faiss')
@@ -37,6 +33,87 @@ except:
     print('Not using Yael')
     USE_YAEL = 0
 
+USE_GPU = torch.cuda.is_available()
+if USE_GPU:
+    DEVICE = torch.device('cuda:0')
+else:
+    DEVICE = torch.device('cpu')
+
+
+def nystroem_features(data_features, nclusters, window_length=1, data_codebook=None, times=None, bandwidth=None,
+                      window_overlap='default', standardize=True, scaler=None, do_pca=True, pca_frac=0.95,
+                      pca_result=None, centroids=None, kmeans_iters=100, ngpu=1, njobs=1, seed=None):
+    """
+    Generate features based on the Nystroem method for the Gaussian RBF kernel for the input data data_features.
+    Reference:
+
+    - Williams, C. K., & Seeger, M. (2001). Using the Nyström method to speed up kernel machines. In Advances in Neural Information Processing Systems (pp. 682-688).
+
+    :param data_features: Data that features will be generated for. Observations are the rows.
+    :type data_features: numpy.ndarray
+    :param nclusters: Number of clusters to use in codebook generation.
+    :type nclusters: int
+    :param window_length: Sliding window length (in terms of time- see below).
+    :type window_length: float
+    :param data_codebook: Data to use for codebook generation. If None, then data_features is used.
+    :type data_codebook: numpy.ndarray
+    :param times: Times corresponding to each observation. If None, the indices of each observation will be used.
+    :type times: numpy.array
+    :param bandwidth: Bandwidth to use for the RBF kernel in the Nystroem computation. If None, the median pairwise
+                      distance rule of thumb is used.
+    :type bandwidth: float
+    :param window_overlap: Amount of overlap between sliding windows, in terms of time. Default: 0.2*window_length.
+    :type window_overlap: float
+    :param standardize: Whether to standardize the input data
+    :type standardize: bool
+    :param scaler: Scikit-learn scaling object from prior scaling.
+    :param do_pca: Whether or not to perform PCA on the data.
+    :type do_pca: bool
+    :param pca_frac: Percentage of variance to be retained after running PCA.
+    :type pca_frac: float
+    :param pca_result: Faiss or scikit-learn pca object from prior run of PCA.
+    :param centroids: Centroids from previous run of codebook generation.
+    :type centroids: numpy.ndarray
+    :param kmeans_iters: Number of iterations of k-means to perform.
+    :type kmeans_iters: int
+    :param ngpu: Number of GPUs to use. Unused if no GPUs are available.
+    :type ngpu: int
+    :param njobs: Number of parallel jobs to run.
+    :type njobs: int
+    :param seed: Seed for reproducibility.
+    :type seed: int
+    :return: (tuple): tuple containing:
+
+            * features (numpy.ndarray): Bag-of-features features.
+            * mirrored_times[start_idxs.astype('int')] (numpy.array): Start time of each interval.
+            * mirrored_times[end_idxs.astype('int')] (numpy.array): End time of each interval.
+            * scaler: Scikit-learn scaler object.
+            * pca: Faiss or scikit-learn pca object.
+            * centroids (numpy.ndarray): Codebook (centroids from k-means)
+    """
+    data_codebook, mirrored_features, mirrored_times, start_idxs, end_idxs, scaler, pca = prep_features(data_codebook,
+                                                                                                        data_features,
+                                                                                                        times,
+                                                                                                        standardize,
+                                                                                                        scaler,
+                                                                                                        do_pca,
+                                                                                                        pca_frac,
+                                                                                                        pca_result,
+                                                                                                        window_length,
+                                                                                                        window_overlap)
+    if centroids is None:
+        centroids = kmeans(data_codebook, nclusters, kmeans_iters, ngpu, njobs, seed)
+    else:
+        if np.size(centroids, 1) != np.size(data_features, 1):
+            raise ValueError('Centroids must have same size of second axis (axis 1) as data_features')
+
+    features = generate_nystroem(mirrored_features, centroids, start_idxs, end_idxs, bandwidth)
+    features = features.cpu().double().numpy()
+
+    print('Done generating features.')
+    return features, mirrored_times[start_idxs.astype('int')], mirrored_times[end_idxs.astype('int')], scaler, pca, centroids
+
+
 
 def bag_of_features(data_features, nclusters, window_length, data_codebook=None, times=None, window_overlap='default',
                     standardize=True, scaler=None, do_pca=True, pca_frac=0.95, pca_result=None, centroids=None,
@@ -56,7 +133,7 @@ def bag_of_features(data_features, nclusters, window_length, data_codebook=None,
     :type times: numpy.array
     :param window_overlap: Amount of overlap between sliding windows, in terms of time. Default: 0.2*window_length.
     :type window_overlap: float
-    :param standardize: Whether to standardize the features
+    :param standardize: Whether to standardize the input data
     :type standardize: bool
     :param scaler: Scikit-learn scaling object from prior scaling.
     :param do_pca: Whether or not to perform PCA on the data.
@@ -127,7 +204,7 @@ def vlad(data_features, nclusters, window_length, data_codebook=None, times=None
     :type times: numpy.array
     :param window_overlap: Amount of overlap between sliding windows, in terms of time. Default: 0.2*window_length.
     :type window_overlap: float
-    :param standardize: Whether to standardize the features
+    :param standardize: Whether to standardize the input data
     :type standardize: bool
     :param scaler: Scikit-learn scaling object from prior scaling.
     :param do_pca: Whether or not to perform PCA on the data.
@@ -199,7 +276,7 @@ def fisher_vectors(data_features, nclusters, window_length, data_codebook=None, 
     :type times: numpy.array
     :param window_overlap: Amount of overlap between sliding windows, in terms of time. Default: 0.2*window_length.
     :type window_overlap: float
-    :param standardize: Whether to standardize the features
+    :param standardize: Whether to standardize the input data
     :type standardize: bool
     :param scaler: Scikit-learn scaling object from prior scaling.
     :param do_pca: Whether or not to perform PCA on the data.
@@ -260,10 +337,11 @@ def prep_features(data_codebook, data_features, times, standardize, scaler, do_p
     """
     Prepare the features by standardizing them, running PCA, mirroring the features, and finding the start and end
     indices for the sliding windows.
+
     :param data_codebook: Data to use for codebook generation. If None, then data_features is used.
     :param data_features: Data that features will be generated for. Observations are the rows.
     :param times: Times corresponding to each observation. If None, the indices of each observation will be used.
-    :param standardize: Whether to standardize the features
+    :param standardize: Whether to standardize the input data
     :param scaler: Scikit-learn scaling object from prior scaling.
     :param do_pca: Whether or not to perform PCA on the data.
     :param pca_frac: Percentage of variance to be retained after running PCA.
@@ -326,6 +404,7 @@ def prep_features(data_codebook, data_features, times, standardize, scaler, do_p
 def run_pca(scaled_features, pca_frac):
     """
     Run PCA on scaled features using either faiss (if available) or scikit-learn (otherwise).
+
     :param scaled_features: Scaled features to run PCA on
     :param pca_frac: Percent of the variance to retain
     :return: pca_features: scaled_features projected to the lower dimensional space
@@ -355,6 +434,7 @@ def run_pca(scaled_features, pca_frac):
 def mirror_features(features, times, window_length, window_overlap):
     """
     Mirror the features so that the first interval is centered at zero and so the last observations are also mirrored.
+
     :param features: Features to be mirrored.
     :param times: Times corresponding to the above features.
     :param window_length: Sliding window length (in terms of time).
@@ -377,6 +457,7 @@ def mirror_features(features, times, window_length, window_overlap):
 def get_window_start_end_idxs(times, mirrored_times, window_length, window_overlap, eps=1e-10):
     """
     Find the start and end indices of each sliding window.
+
     :param times: Times corresponding to each observation.
     :param mirrored_times: Times corresponding to each mirrored observation.
     :param window_length: Sliding window length (in terms of time).
@@ -415,8 +496,9 @@ def get_window_start_end_idxs(times, mirrored_times, window_length, window_overl
 
 def kmeans(features, nclusters, num_iters, ngpu, njobs, seed):
     """
-    Run k-means on features, generating nclusters clusters. It will use, in order of preference, faiss, pomegranate, or
+    Run k-means on features, generating nclusters clusters. It will use, in order of preference, Faiss, pomegranate, or
     scikit-learn.
+
     :param features: Features to cluster.
     :param nclusters: Number of clusters to generate.
     :param num_iters: Maximum number of iterations to perform.
@@ -482,6 +564,7 @@ def gmm(features, ncomponents, num_iters, njobs, nredo, seed):
     """
     Fit a Gaussian Mixture Model with nclusters using either Yael (if available) or scikit-learn (otherwise). The GMM
     assumes a diagonal covariance matrix.
+
     :param features: Features to use to fit the GMM.
     :param ncomponents: Number of components in the GMM.
     :param num_iters: Maximum number of iterations to perform when fitting the GMM.
@@ -516,6 +599,7 @@ def gmm(features, ncomponents, num_iters, njobs, nredo, seed):
 def find_closest_centroid(centroids, features):
     """
     Find the closest centroid to each feature in terms of l2 distance.
+
     :param centroids: Centroids from codebook generation.
     :param features: Features for which you want to compute the nearest centroid.
     :return: idxs: Indices of the nearest centroid to each observation in features.
@@ -544,9 +628,106 @@ def find_closest_centroid(centroids, features):
     return idxs
 
 
+def rbf_kernel(x, y, bandwidth=None):
+    """
+    Compute the value of the rbf kernel between every row of x and every row of y
+
+    :param x: Data with dimensions number of examples x number of features.
+    :param y: Data with dimensions number of examples x number of features.
+    :param bandwidth: Bandwidth for the RBF kernel. If None, the median pairwise distance rule of thumb is used.
+    :return: gram: The gram matrix between x and y.
+    :return: bandwidth: The bandwidth used for the kernel.
+    """
+    norm = squared_l2_norm(x, y)
+    if bandwidth is None:
+        bandwidth = torch.median(torch.sqrt(torch.max(norm, torch.DoubleTensor([1e-6]).to(DEVICE))))
+        print('Using rule of thumb bandwidth:', bandwidth.item())
+    gram = torch.exp(-1 / (2 * bandwidth ** 2) * norm)
+
+    return gram, bandwidth
+
+
+def squared_l2_norm(x, y):
+    """
+    Computed the squared l2 distance between each row of x and each row of y
+
+    :param x: Data with dimensions number of examples x number of features.
+    :param y: Data with dimensions number of examples x number of features.
+    :return: Squared l2 distance between each row of x and each row of y
+    """
+    nx = x.shape[0]
+    ny = y.shape[0]
+
+    norm_x = torch.sum(x ** 2, 1).unsqueeze(0)
+    norm_y = torch.sum(y ** 2, 1).unsqueeze(0)
+
+    ones_x = torch.ones(nx, 1).double().to(DEVICE)
+    ones_y = torch.ones(ny, 1).double().to(DEVICE)
+
+    a = torch.mm(ones_y, norm_x)  # ny*nx
+    b = torch.mm(x, y.t())  # nx*ny
+    c = torch.mm(ones_x, norm_y)  # nx*ny
+
+    return a.t() - 2 * b + c
+
+
+def matrix_inv_sqrt(matrix, eps=1e-12, reg=0.001):
+    """
+    Given an input matrix, compute the matrix inverse square root (matrix)^{-1/2}
+
+    :param matrix: Input matrix to compute the inverse square root of.
+    :param eps: Threshold for the minum singular value
+    :param reg: Regularization, in case the input matrix is poorly conditioned
+    :return: normalization: The matrix inverse square root (matrix)^{-1/2} of the input matrix
+    """
+    U, S, V = torch.svd(matrix.to(DEVICE))
+    eps = torch.Tensor([eps]).double().to(DEVICE)
+    sqrt_S = torch.sqrt(torch.max(S, eps) + reg)
+    normalization = torch.mm(torch.div(U, sqrt_S), V.t())
+
+    return normalization
+
+
+def generate_nystroem(features, centroids, start_idxs, end_idxs, bandwidth, return_last_features=False):
+    """
+    Generate features for each time period based on the Nystroem method. This computes the Nystroem features for every
+    data point and then averages them within each input interval.
+
+    :param features: Features to use in the Nystroem approximation
+    :param centroids: Centroids used to determine the subspace to project onto in the Nystroem method
+    :param start_idxs: Starting point of each time interval
+    :param end_idxs: Ending point of each time interval
+    :param bandwidth: Bandwidth for the RBF kernel
+    :param return_last_features: Whether to return the non-averaged features for the last interval (for debugging
+                                 purposes)
+    :return: mean_nystroem_features: Averaged Nystroem features for each interval
+    :return: features: The non-averaged features for the last interval
+    """
+    ndistns = len(start_idxs)
+    mean_nystroem_features = torch.zeros((ndistns, centroids.shape[0]))
+    features = torch.DoubleTensor(features).to(DEVICE)
+    centroids = torch.DoubleTensor(centroids).to(DEVICE)
+    kww, bandwidth = rbf_kernel(centroids, centroids, bandwidth=bandwidth)
+    kww_inv_sqrt = matrix_inv_sqrt(kww)
+    print('Generating features...')
+    for i in range(ndistns):
+        if i % 100 == 0:
+            print('\r%0.2f' % (i*1.0 / ndistns * 100), '% done', end='')
+        kwx, _ = rbf_kernel(centroids, features[int(start_idxs[i]):(int(end_idxs[i])+1)], bandwidth=bandwidth)
+        nystroem_features = (kww_inv_sqrt.mm(kwx)).t()
+        mean_nystroem_features[i] = nystroem_features.mean(0).cpu()
+    print('\r100.00 % done')
+
+    if not return_last_features:
+        return mean_nystroem_features
+    else:
+        return mean_nystroem_features, nystroem_features
+
+
 def generate_bof(mirrored_features, centroids, start_idxs, end_idxs):
     """
     Generate bag-of-features features for mirrored_features.
+
     :param mirrored_features: Features to compute bag-of-features features for.
     :param centroids: Codebook.
     :param start_idxs: Start indices of each sliding window.
@@ -570,6 +751,7 @@ def generate_bof(mirrored_features, centroids, start_idxs, end_idxs):
 def generate_vlad(features, centroids, start_idxs, end_idxs):
     """
     Generate VLAD features for features.
+
     :param features: Features to generate VLAD features from.
     :param centroids: Codebook.
     :param start_idxs: Start indices of each sliding window.
@@ -602,6 +784,7 @@ def generate_vlad(features, centroids, start_idxs, end_idxs):
 def generate_fisher(mirrored_features, gmm_results, gmm_object, ncomponents, start_idxs, end_idxs):
     """
     Generate Fisher vector features for mirrored_features.
+
     :param mirrored_features: Features to compute Fisher vector features for.
     :param gmm_results: (weights, means, sigmas) from fitted GMM.
     :param gmm_object: GMM object from either yael or scikit-learn.
@@ -644,6 +827,7 @@ def generate_fisher(mirrored_features, gmm_results, gmm_object, ncomponents, sta
 def power_l2_normalize(features, power_normalize=True):
     """
     Sign-square-root and l2 normalize features
+
     :param features: Features to power and l2-normalize
     :return: features: Power and l2-normalized features
     """
@@ -658,6 +842,7 @@ def power_l2_normalize(features, power_normalize=True):
 def compute_gmm_probs(x, ws, mus, sigmas):
     """
     Given a vector x, compute the probability of it belonging to each component of a Gaussian mixture model.
+
     :param x: Observation to compute probabilities for.
     :param ws: Mixture component probabilities.
     :param mus: Means from mixture model.

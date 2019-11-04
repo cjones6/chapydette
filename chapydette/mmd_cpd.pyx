@@ -5,7 +5,7 @@ import numpy as np
 
 cpdef mmd_cpd(gram_matrix):
     """
-    Given a gram matrix, estimate the location of one changepoint based on the Maximum Mean Discrepancy.
+    Given a gram matrix, estimate the location of one change point based on the Maximum Mean Discrepancy.
 
     References:
     - Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf, B., & Smola, A. (2012). A kernel two-sample test. Journal
@@ -14,7 +14,7 @@ cpdef mmd_cpd(gram_matrix):
      Processing Systems (pp. 609-616).
      
     :param X: Either the data matrix (if gram=False) or the gram matrix (if gram=True)
-    :return t_opt: Estimated changepoint index. This is the last index in the first segment.
+    :return t_opt: Estimated change point index. This is the last index in the first segment.
     :return obj_vals: The objective value at each location.
     """
 

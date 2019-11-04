@@ -17,7 +17,7 @@ cdef inline long long_min(long a, long b) nogil: return a if a <= b else b
 @cython.boundscheck(False)
 cpdef kcpe(np.ndarray[np.float64_t, ndim=2] X, int k, int kernel_type, double bw, unsigned int min_dist):
     """
-    Run the kernel changepoint algorithm of Harchaoui and Cappé (2007) to detect a fixed number k of changepoints in
+    Run the kernel change-point algorithm of Harchaoui and Cappé (2007) to detect a fixed number k of change points in
     a sequence of observations X. Each row of X is one observation, unless kernel_type is specified to be -1, in which
     case X is assumed to be a pre-computed gram matrix between the observations.
     
@@ -26,7 +26,7 @@ cpdef kcpe(np.ndarray[np.float64_t, ndim=2] X, int k, int kernel_type, double bw
     In  IEEE/SP 14th Workshop on Statistical Signal Processing, 2007. SSP'07. (pp. 768-772). IEEE.
     
     :param X: Matrix of observations or pre-computed gram matrix
-    :param k: Number of changepoints to detect
+    :param k: Number of change points to detect
     :param kernel_type: Type of kernel to use:
                         -1: Precomputed gram stored in X
                         0: Chi-square 
@@ -35,8 +35,8 @@ cpdef kcpe(np.ndarray[np.float64_t, ndim=2] X, int k, int kernel_type, double bw
                         3: Gaussian with TV distance
                         4: Linear 
     :param bw: Bandwidth for the kernel
-    :param min_dist: Minimum allowable distance between successive changepoints
-    :return: T: Indices of the estimated changepoints (estimated endpoint of each segment)
+    :param min_dist: Minimum allowable distance between successive change points
+    :return: T: Indices of the estimated change points (estimated endpoint of each segment)
              N[n - min_dist, k - 1]: The value at the optimum of the (non-penalized) objective function
     """
     cdef unsigned int n = np.size(X, 0)
@@ -50,18 +50,18 @@ cpdef kcpe(np.ndarray[np.float64_t, ndim=2] X, int k, int kernel_type, double bw
 @cython.boundscheck(False)
 cpdef kcpe_range_cp(np.ndarray[np.float64_t, ndim=2] X, int min_cp, int max_cp, int kernel_type, double bw, unsigned int min_dist):
     """
-    Run the kernel changepoint algorithm of Harchaoui and Cappé (2007) to detect changepoints in a sequence of 
+    Run the kernel change-point algorithm of Harchaoui and Cappé (2007) to detect change points in a sequence of 
     observations X. Each row of X is one observation, unless kernel_type is specified to be -1, in which
     case X is assumed to be a pre-computed gram matrix between the observations. The algorithm is run for a varying
-    number of changepoints between min_cp and max_cp (inclusive).
+    number of change points between min_cp and max_cp (inclusive).
     
     Reference:
     Harchaoui, Z., & Cappé, O. (2007, August). Retrospective multiple change-point estimation with kernels. 
     In  IEEE/SP 14th Workshop on Statistical Signal Processing, 2007. SSP'07. (pp. 768-772). IEEE.
     
     :param X: Matrix of observations or pre-computed gram matrix
-    :param min_cp: Lower bound on interval of the number of changepoints to detect
-    :param max_cp: Upper bound on interval of the number of changepoints to detect
+    :param min_cp: Lower bound on interval of the number of change points to detect
+    :param max_cp: Upper bound on interval of the number of change points to detect
     :param kernel_type: Type of kernel to use:
                         -1: Precomputed gram stored in X
                         0: Chi-square 
@@ -70,11 +70,11 @@ cpdef kcpe_range_cp(np.ndarray[np.float64_t, ndim=2] X, int min_cp, int max_cp, 
                         3: Gaussian with TV distance
                         4: Linear 
     :param bw: Bandwidth for the kernel
-    :param min_dist: Minimum allowable distance between successive changepoints
-    :return: all_ts: Dictionary with the estimated changepoints (estimated endpoint of each segment). The keys are the 
-                     number of changepoints.
+    :param min_dist: Minimum allowable distance between successive change points
+    :return: all_ts: Dictionary with the estimated change points (estimated endpoint of each segment). The keys are the 
+                     number of change points.
              all_objs: Dictionary with the values of the minimized (non-penalized) objective function. The keys are the 
-                       number of changepoints.
+                       number of change points.
     """
     cdef unsigned int n = np.size(X, 0)
 
@@ -96,10 +96,10 @@ cpdef kcpe_range_cp(np.ndarray[np.float64_t, ndim=2] X, int min_cp, int max_cp, 
 @cython.initializedcheck(False)
 cpdef kcpe_forward_pass(np.ndarray[np.float64_t, ndim=2] X, int min_cp, int max_cp, int kernel_type, double bw, unsigned int min_dist):
     """
-    Perform the forward pass of the multiple kernel changepoint algorithm.
+    Perform the forward pass of the multiple kernel change-point algorithm.
     :param X: Matrix of observations or pre-computed gram matrix
-    :param min_cp: Lower bound on interval of the number of changepoints to detect
-    :param max_cp: Upper bound on interval of the number of changepoints to detect
+    :param min_cp: Lower bound on interval of the number of change points to detect
+    :param max_cp: Upper bound on interval of the number of change points to detect
     :param kernel_type: Type of kernel to use:
                         -1: Precomputed gram stored in X
                         0: Chi-square 
@@ -108,9 +108,9 @@ cpdef kcpe_forward_pass(np.ndarray[np.float64_t, ndim=2] X, int min_cp, int max_
                         3: Gaussian with TV distance
                         4: Linear 
     :param bw: Bandwidth for the kernel
-    :param min_dist: Minimum allowable distance between successive changepoints
+    :param min_dist: Minimum allowable distance between successive change points
     :return: N: N[i,j] is argmin_{i<=s<=k} I[i-1,s] + \sum_{t=s+1}^k \|\phi(x_t)-\hat\mu_{s+1,k}\|^2_H.
-             I: I[i,j] is the objective value for j changepoints in the first i observations
+             I: I[i,j] is the objective value for j change points in the first i observations
     """
     cdef double[::1] X_contig = X.flatten()
     cdef long n = np.size(X, 0)
@@ -139,7 +139,7 @@ cpdef kcpe_forward_pass(np.ndarray[np.float64_t, ndim=2] X, int min_cp, int max_
     num_threads = omp_get_max_threads()-1
     compute_area_table(area_table, diag, X_contig, n, d, kernel_type, bw)
 
-    # No changepoint case
+    # No change point case
     for i in range(min_dist-1, n-(min_cp-1)*min_dist):
         # All but linear, precomputed kernels have 1 on the diagonal of the gram matrix
         if kernel_type != 4 and kernel_type != -1:
@@ -148,11 +148,11 @@ cpdef kcpe_forward_pass(np.ndarray[np.float64_t, ndim=2] X, int min_cp, int max_
             I[i+1, 0] = diag[i] - 1.0/(i+1.0)*area_table[i*(i+1)/2+i]
 
     with nogil:
-        for j in range(1, max_cp):  # j: number of changepoints
+        for j in range(1, max_cp):  # j: number of change points
             i_end = n-long_max(<long> (min_cp-j-1)*min_dist, <int> 0)
             for i in prange((j+1)*min_dist-1, i_end, schedule='dynamic', num_threads=num_threads):
                 t_end = long_max(<long>j, <long>(i + 1 - min_dist))
-                for t in range(j*min_dist-1, t_end):  # t: possible location of next best changepoint
+                for t in range(j*min_dist-1, t_end):  # t: possible location of next best change point
                     if i > t+1:
                         if kernel_type != 4 and kernel_type != -1:
                             s = i-t - 1.0/(i-t)*(area_table[i*(i+1)/2+i]+area_table[(t+1)*t/2+t]-2*area_table[(i+1)*i/2+t])
@@ -177,20 +177,19 @@ cpdef kcpe_forward_pass(np.ndarray[np.float64_t, ndim=2] X, int min_cp, int max_
 @cython.initializedcheck(False)
 cpdef kcpe_backward_pass(double[:, ::1] N, double[:, ::1] I, int k, int n, int min_dist):
     """
-    Compute the backward pass of the multiple kernel changepoint algorithm.
+    Compute the backward pass of the multiple kernel change-point algorithm.
     :param N: N[i,j] is argmin_{i<=s<=k} I[i-1,s] + \sum_{t=s+1}^k \|\phi(x_t)-\hat\mu_{s+1,k}\|^2_H.
-    :param I: I[i,j] is the objective value for j changepoints in the first i observations
-    :param k: Number of changepoints
+    :param I: I[i,j] is the objective value for j change points in the first i observations
+    :param k: Number of change points
     :param n: Number of observations
-    :param min_dist: Minimum allowable distance between changepoints
-    :return: T: Indices of changepoints
+    :param min_dist: Minimum allowable distance between change points
+    :return: T: Indices of change points
              I[n - min_dist, k - 1]: Objective value at the optimum
     """
     cdef int[::1] T = np.zeros(k, dtype=np.int32)
     cdef unsigned int i
 
     T[k - 1] = n
-    print(I[n, k-1])
     for i in range(k - 1, 0, -1):
         T[i-1] = <int> N[T[i], i]
     for i in range(k, 0, -1):
