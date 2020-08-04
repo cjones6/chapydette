@@ -11,11 +11,12 @@ See the full [documentation](http://www.stat.washington.edu/~cjones6/software/ch
 
 Installation
 -----------------
-This code was written using Python 3.7 and requires Cython, Numba, Numpy, PyTorch, Scipy, and Scikit-learn. If you are using Anaconda you can install these via  
+This code was written using Python 3.7 and requires Cython, Faiss, Numba, Numpy, PyTorch, Scipy, and Scikit-learn. If you are using Anaconda you can install these via  
 ```
 conda install cython numba numpy scipy scikit-learn
 conda install pytorch torchvision cpuonly -c pytorch
-```  
+conda install faiss-cpu -c pytorch 
+```
 If you are using a Mac, you should also install llvm, gcc, and libgcc:  
 `conda install llvm gcc libgcc`  
 To then install this package, run   
@@ -24,9 +25,8 @@ from the installation directory.
 
 This code has not been tested on a Windows operating system.
 
-The installer will check whether you have the remainder of the required dependencies. There are three optional dependencies:
+The installer will check whether you have the remainder of the required dependencies. There are two optional dependencies:
 
-* Faiss https://github.com/facebookresearch/faiss
 * Yael http://yael.gforge.inria.fr/
 * Pomegranate https://pomegranate.readthedocs.io/en/latest/index.html
 
