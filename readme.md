@@ -11,8 +11,11 @@ See the full [documentation](http://www.stat.washington.edu/~cjones6/software/ch
 
 Installation
 -----------------
-This code was written using Python 3.7 and requires Cython, Numpy, Scipy, and Scikit-learn. If you are using Anaconda you can install these via  
-` conda install cython numpy scipy scikit-learn`  
+This code was written using Python 3.7 and requires Cython, Numba, Numpy, PyTorch, Scipy, and Scikit-learn. If you are using Anaconda you can install these via  
+```
+conda install cython numba numpy scipy scikit-learn
+conda install pytorch torchvision cpuonly -c pytorch
+```  
 If you are using a Mac, you should also install llvm, gcc, and libgcc:  
 `conda install llvm gcc libgcc`  
 To then install this package, run   
@@ -27,7 +30,7 @@ The installer will check whether you have the remainder of the required dependen
 * Yael http://yael.gforge.inria.fr/
 * Pomegranate https://pomegranate.readthedocs.io/en/latest/index.html
 
-If you have them installed and use them, they will greatly speed up the feature generation code.
+If you have them installed and use them, they can greatly speed up the feature generation code.
 
 Layout
 -----------------
@@ -43,6 +46,21 @@ Authors
 -----------------
 [Corinne Jones](https://www.stat.washington.edu/people/cjones6/)  
 [Zaid Harchaoui](http://faculty.washington.edu/zaid/)
+
+Citation
+-----------------
+If you use this code in your work please cite the following paper:
+
+C. Jones and Z. Harchaoui. End-to-End Learning for Retrospective Change-Point Estimation. In *Proceedings of the IEEE International Workshop on Machine Learning for Signal Processing* (to appear), 2020.
+
+```
+@inproceedings{JH2020,
+  author    = {Jones, Corinne and Harchaoui, Zaid},
+  title     = {End-to-End Learning for Retrospective Change-Point Estimation},
+  booktitle = {30th {IEEE} International Workshop on Machine Learning for Signal Processing},
+  year      = {2020},
+}
+```
 
 License
 -----------------

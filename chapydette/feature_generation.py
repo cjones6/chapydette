@@ -1,6 +1,7 @@
 # coding=utf-8
 from __future__ import division
 from __future__ import print_function
+from numba import njit, prange
 import numpy as np
 import scipy.spatial.distance
 import sklearn.cluster
@@ -454,6 +455,7 @@ def mirror_features(features, times, window_length, window_overlap):
     return mirrored_features, mirrored_times
 
 
+@njit(parallel=True)
 def get_window_start_end_idxs(times, mirrored_times, window_length, window_overlap, eps=1e-10):
     """
     Find the start and end indices of each sliding window.
@@ -478,7 +480,7 @@ def get_window_start_end_idxs(times, mirrored_times, window_length, window_overl
 
     start_idxs = np.zeros(len(start_times))
     end_idxs = np.zeros(len(end_times))
-    for i in range(len(start_times)):
+    for i in prange(len(start_times)):
         idxs = sorted(np.where((start_times[i] <= mirrored_times) & (mirrored_times < end_times[i]))[0])
         if len(idxs) != 0:
             start_idxs[i] = idxs[0]
@@ -486,6 +488,7 @@ def get_window_start_end_idxs(times, mirrored_times, window_length, window_overl
         else:
             start_idxs[i] = -1
             end_idxs[i] = -1
+
     # Remove places where there are no obs
     null_idxs = np.where((start_idxs == end_idxs) & (start_idxs == -1))[0]
     start_idxs = np.delete(start_idxs, null_idxs)

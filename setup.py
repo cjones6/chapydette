@@ -28,6 +28,7 @@ setup(name='Chapydette',
       include_dirs=['.', 'chapydette', np.get_include()],
       install_requires=[
           'Cython',
+          'numba',
           'numpy',
           'scipy',
           'scikit-learn',
