@@ -22,8 +22,7 @@ cpdef kcpe(np.ndarray[np.float64_t, ndim=2] X, int k, int kernel_type, double bw
     case X is assumed to be a pre-computed gram matrix between the observations.
     
     Reference:
-    Harchaoui, Z., & Cappé, O. (2007, August). Retrospective multiple change-point estimation with kernels. 
-    In  IEEE/SP 14th Workshop on Statistical Signal Processing, 2007. SSP'07. (pp. 768-772). IEEE.
+    Z. Harchaoui and O. Cappé. Retrospective mutiple change-point estimation with kernels. In IEEE Workshop on Statistical Signal Processing, pages 768–772, 2007.
     
     :param X: Matrix of observations or pre-computed gram matrix
     :param k: Number of change points to detect
@@ -202,7 +201,7 @@ cpdef kcpe_backward_pass(double[:, ::1] N, double[:, ::1] I, int k, int n, int m
 @cython.cdivision(True)
 @cython.wraparound(False)
 @cython.initializedcheck(False)
-cdef void compute_area_table(double[::1] S, double[::1] diag, double[::1] X, long n, unsigned int d, int kernel_type, float bw):
+cdef void compute_area_table(double[::1] S, double[::1] diag, double[::1] X, long n, unsigned int d, int kernel_type, double bw):
     """
     Compute the summed area table for the gram matrix. Since the kernels are symmetric, we can just compute the lower 
     (or upper) diagonal.     
@@ -246,7 +245,7 @@ cdef void compute_area_table(double[::1] S, double[::1] diag, double[::1] X, lon
 @cython.cdivision(True)
 @cython.wraparound(False)
 @cython.initializedcheck(False)
-cdef void fill_area_table(double[::1] S, double[::1] diag, double[::1] X, long n, unsigned int d, int kernel_type, float bw, long i, long j) nogil:
+cdef void fill_area_table(double[::1] S, double[::1] diag, double[::1] X, long n, unsigned int d, int kernel_type, double bw, long i, long j) nogil:
     """
     Compute and fill in entry (i,j) in the summed area table for the gram matrix.  
     (or upper) diagonal.     
@@ -290,7 +289,3 @@ cdef void fill_area_table(double[::1] S, double[::1] diag, double[::1] X, long n
             diag[i] = diag[i-1] + entry
         else:
             diag[i] = entry
-
-
-
-

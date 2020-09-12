@@ -5,7 +5,7 @@ cimport cython
 from libc.math cimport exp, fabs, sqrt
 
 
-cpdef compute_gram(np.ndarray[np.float64_t, ndim=2] X, int kernel_type, float bw):
+cpdef compute_gram(np.ndarray[np.float64_t, ndim=2] X, int kernel_type, double bw):
     """
     Compute the gram matrix for data matrix X using a kernel with bandwidth bw
     :param X: Data matrix
@@ -27,7 +27,7 @@ cpdef compute_gram(np.ndarray[np.float64_t, ndim=2] X, int kernel_type, float bw
     return gram_matrix.reshape((n, n))
 
 
-cdef void compute_gram_c(double[::1] X, double *gram, unsigned int n, unsigned int d, int kernel_type, float bw):
+cdef void compute_gram_c(double[::1] X, double *gram, unsigned int n, unsigned int d, int kernel_type, double bw):
     """
     Compute the gram matrix for data matrix X using a kernel with bandwidth bw
     :param X: Data matrix
@@ -54,7 +54,7 @@ cdef void compute_gram_c(double[::1] X, double *gram, unsigned int n, unsigned i
 @cython.cdivision(True)
 @cython.wraparound(False)
 @cython.initializedcheck(False)
-cdef double compute_gram_entry(double[::1] X, long i, long j, long n, unsigned int d, int kernel_type, float bw) nogil:
+cdef double compute_gram_entry(double[::1] X, long i, long j, long n, unsigned int d, int kernel_type, double bw) nogil:
     """
     Compute the value of a kernel with bandwidth bw between samples i and j from data matrix X
     :param X: Data matrix

@@ -1,13 +1,12 @@
 Chapydette
 ====================================
 
-Chapydette contains fast Cython implementations of kernel-based change-point detection algorithms and feature generation methods. There are currently two algorithms implemented:
+Chapydette contains fast Cython implementations of kernel-based change-point detection algorithms and feature generation methods. There are currently two main algorithms implemented:
 
-* The kernel change-point algorithm of Harchaoui and Cappé (2007), which detects a fixed number of change points in a sequence of observations.
+* The kernel change-point algorithm of Harchaoui and Cappé (2007), which detects a fixed number of change points in a sequence of observations. We also provide an implementation of the data-driven model selection procedure based on Arlot, Celisse, and Harchaoui (2019), which allows one to automatically select the number of change points.
 * The change-point analysis algorithm of Harchaoui, Bach, and Moulines (2009), which detects the presence of and estimates the location of a single change point based on the Maximum Mean Discrepancy (Gretton et al., 2012).
 
-See the full [documentation](http://www.stat.washington.edu/~cjones6/software/chapydette/) for more details. The next release will include the following addition:  
-- A data-driven model selection procedure based on Arlot, Celisse, and Harchaoui (2019), which allows one to automatically select the number of change points.
+See the full [documentation](http://www.stat.washington.edu/~cjones6/software/chapydette/) for more details. 
 
 Installation
 -----------------
@@ -40,7 +39,7 @@ There are two tasks that Chapydette can perform:
 1. Feature generation
 2. Change-point estimation
 
-The functions for the former are contained in feature_generation.py, while the functions for the latter are in cp_estimation.py. Examples of how to use Chapydette are provided in the Jupyter notebook in the examples directory.
+The functions for the former are contained in feature_generation.py, while the functions for the latter are in cp_estimation.py. Examples of how to use Chapydette are provided in the Jupyter notebooks in the examples directory.
 
 Authors
 -----------------
@@ -69,7 +68,7 @@ This code has a GPLv3 license.
 References
 -----------------
 
-- S. Arlot, A. Celisse, and Z. Harchaoui, "A kernel multiple change-point algorithm via model selection," *Journal of Machine Learning Research (to appear)*.  
+- S. Arlot, A. Celisse, and Z. Harchaoui, "A kernel multiple change-point algorithm via model selection," *Journal of Machine Learning Research*, 2019.  
 - A. Gretton, K.M. Borgwardt, M.J. Rasch, B. Schölkopf, and A. Smola, "A kernel two-sample test," *Journal of Machine Learning Research*, vol. 13, pp. 723–773, 2012.  
 - Z. Harchaoui and O. Cappé, "Retrospective mutiple change-point estimation with kernels," in *IEEE Workshop on Statistical Signal Processing*, 2007, pp. 768–772.  
 - Z. Harchaoui, F.R. Bach, and E. Moulines, "Kernel change-point analysis," in *Advances in Neural Information Processing Systems*, 2008, pp. 609–616.
