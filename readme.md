@@ -10,14 +10,20 @@ See the full [documentation](http://www.stat.washington.edu/~cjones6/software/ch
 
 Installation
 -----------------
-This code was written using Python 3.7 and requires Cython, Faiss, Numba, Numpy, PyTorch, Scipy, and Scikit-learn. If you are using Anaconda you can install these via  
+This code was written using Python 3.7 and requires Cython, Faiss, Jupyter, Matplotlib, Numba, Numpy, PyTorch, Scipy, and Scikit-learn. If you are using Anaconda you can install these in a new conda environment called `chpt` via  
 ```
-conda install cython numba numpy scipy scikit-learn
+conda create -y --name=chpt python=3.7
+conda activate chpt
+conda install cython jupyter matplotlib nb_conda numba numpy scipy scikit-learn
 conda install pytorch torchvision cpuonly -c pytorch
 conda install faiss-cpu -c pytorch 
 ```
-If you are using a Mac, you should also install llvm, gcc, and libgcc:  
+
+In order to compile the code you will need to have gcc installed. If you are using Ubuntu, you can install this via
+`sudo apt install build-essential`
+If you are using a Mac, you should install llvm, gcc, and libgcc:  
 `conda install llvm gcc libgcc`  
+
 To then install this package, run   
 `python setup.py install`   
 from the installation directory. 
