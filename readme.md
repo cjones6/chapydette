@@ -19,9 +19,9 @@ conda install pytorch torchvision cpuonly -c pytorch
 conda install faiss-cpu -c pytorch 
 ```
 
-In order to compile the code you will need to have gcc installed. If you are using Ubuntu, you can install this via
-`sudo apt install build-essential`
-If you are using a Mac, you should install llvm, gcc, and libgcc:  
+In order to compile the code you will need to have gcc installed. If you are using Ubuntu, you can install this via  
+`sudo apt install build-essential`  
+If you are using a Mac, you should install llvm, gcc, and libgcc:   
 `conda install llvm gcc libgcc`  
 
 To then install this package, run   
