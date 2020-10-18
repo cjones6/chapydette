@@ -387,6 +387,7 @@ def prep_features(data_codebook, data_features, times, standardize, scaler, do_p
         data_codebook = pca.transform(data_codebook)
         do_pca = True
     else:
+        data_codebook = scaled_features
         pca = None
     if do_pca and not reuse_data:
         if USE_FAISS:
@@ -395,7 +396,7 @@ def prep_features(data_codebook, data_features, times, standardize, scaler, do_p
     elif standardize and not reuse_data:
         data_features = scaler.transform(data_features)
     else:
-        data_features = data_codebook
+        data_features = data_codebook.copy()
     mirrored_features, mirrored_times = mirror_features(data_features, times, window_length, window_overlap)
     start_idxs, end_idxs = get_window_start_end_idxs(times, mirrored_times, window_length, window_overlap)
 
