@@ -6,8 +6,6 @@ Chapydette contains fast Cython implementations of kernel-based change-point det
 * The kernel change-point algorithm of Harchaoui and Cappé (2007), which detects a fixed number of change points in a sequence of observations. We also provide an implementation of the data-driven model selection procedure based on Arlot, Celisse, and Harchaoui (2019), which allows one to automatically select the number of change points.
 * The change-point analysis algorithm of Harchaoui, Bach, and Moulines (2009), which detects the presence of and estimates the location of a single change point based on the Maximum Mean Discrepancy (Gretton et al., 2012).
 
-See the full [documentation](http://www.stat.washington.edu/~cjones6/software/chapydette/) for more details. 
-
 Installation
 -----------------
 This code was written using Python 3.7 and requires Cython, Faiss, Jupyter, Matplotlib, Numba, Numpy, PyTorch, Scipy, and Scikit-learn. If you are using Anaconda you can install these in a new conda environment called `chpt` via  
