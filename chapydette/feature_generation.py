@@ -12,26 +12,20 @@ import torch
 
 try:
     import faiss
-    print('Using Faiss')
     USE_FAISS = 1
 except:
     USE_FAISS = 0
-    print('Not using faiss')
 
 try:
     import pomegranate
-    print('Using pomegranate')
     USE_POMEGRANATE = 1
 except:
     USE_POMEGRANATE = 0
-    print('Not using pomegranate')
 
 try:
     from yael import yael, ynumpy
-    print('Using Yael')
     USE_YAEL = 1
 except:
-    print('Not using Yael')
     USE_YAEL = 0
 
 USE_GPU = torch.cuda.is_available()
