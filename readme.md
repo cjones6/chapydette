@@ -52,9 +52,9 @@ Authors
 
 Citation
 -----------------
-If you use this code in your work please cite the following paper:
+If you use this code in your work please cite one of the following papers:
 
-C. Jones and Z. Harchaoui. End-to-End Learning for Retrospective Change-Point Estimation. In *Proceedings of the IEEE International Workshop on Machine Learning for Signal Processing* (to appear), 2020.
+- C. Jones and Z. Harchaoui. [End-to-End Learning for Retrospective Change-Point Estimation](https://ieeexplore.ieee.org/document/9231768). In *Proceedings of the IEEE International Workshop on Machine Learning for Signal Processing*, 2020.
 
 ```
 @inproceedings{JH2020,
@@ -62,8 +62,23 @@ C. Jones and Z. Harchaoui. End-to-End Learning for Retrospective Change-Point Es
   title     = {End-to-End Learning for Retrospective Change-Point Estimation},
   booktitle = {30th {IEEE} International Workshop on Machine Learning for Signal Processing},
   year      = {2020},
+  doi       = {10.1109/MLSP49062.2020.9231768}
 }
 ```
+
+- C. Jones, S. Clayton, F. Ribalet, E.V. Armbrust, and Z. Harchaoui. [A Kernel-Based Change Detection Method to Map Shifts in Phytoplankton Communities Measured by Flow Cytometry](https://www.biorxiv.org/content/early/2020/12/02/2020.12.01.405126). bioRxiv, 2020. 
+```
+@article {JCRAH2020,
+	author       = {Jones, Corinne and Clayton, Sophie and Ribalet, Fran{\c c}ois and Armbrust, E. Virginia and Harchaoui, Zaid},
+	title        = {A Kernel-Based Change Detection Method to Map Shifts in Phytoplankton Communities Measured by Flow Cytometry},
+	elocation-id = {2020.12.01.405126},
+	year         = {2020},
+	doi          = {10.1101/2020.12.01.405126},
+	publisher    = {Cold Spring Harbor Laboratory},
+	journal      = {bioRxiv}
+}
+```
+
 
 License
 -----------------
