@@ -85,6 +85,7 @@ def nystroem_features(data_features, nclusters, window_length=1, data_codebook=N
             * scaler: Scikit-learn scaler object.
             * pca: Faiss or scikit-learn pca object.
             * centroids (numpy.ndarray): Codebook (centroids from k-means)
+            * bandwidth: Bandwidth used in the Gaussian RBF kernel
     """
     data_codebook, mirrored_features, mirrored_times, start_idxs, end_idxs, scaler, pca = prep_features(data_codebook,
                                                                                                         data_features,
@@ -102,12 +103,12 @@ def nystroem_features(data_features, nclusters, window_length=1, data_codebook=N
         if np.size(centroids, 1) != np.size(data_features, 1):
             raise ValueError('Centroids must have same size of second axis (axis 1) as data_features')
 
-    features = generate_nystroem(mirrored_features, centroids, start_idxs, end_idxs, bandwidth)
+    features, bandwidth = generate_nystroem(mirrored_features, centroids, start_idxs, end_idxs, bandwidth)
     features = features.cpu().double().numpy()
 
     print('Done generating features.')
-    return features, mirrored_times[start_idxs.astype('int')], mirrored_times[end_idxs.astype('int')], scaler, pca, centroids
-
+    return features, mirrored_times[start_idxs.astype('int')], mirrored_times[end_idxs.astype('int')], scaler, pca, \
+           centroids, bandwidth
 
 
 def bag_of_features(data_features, nclusters, window_length, data_codebook=None, times=None, window_overlap='default',
@@ -699,6 +700,7 @@ def generate_nystroem(features, centroids, start_idxs, end_idxs, bandwidth, retu
     :param return_last_features: Whether to return the non-averaged features for the last interval (for debugging
                                  purposes)
     :return: mean_nystroem_features: Averaged Nystroem features for each interval
+    :return: bandwidth: The bandwidth used in the Gaussian RBF kernel
     :return: features: The non-averaged features for the last interval
     """
     ndistns = len(start_idxs)
@@ -717,9 +719,9 @@ def generate_nystroem(features, centroids, start_idxs, end_idxs, bandwidth, retu
     print('\r100.00 % done')
 
     if not return_last_features:
-        return mean_nystroem_features
+        return mean_nystroem_features, bandwidth
     else:
-        return mean_nystroem_features, nystroem_features
+        return mean_nystroem_features, bandwidth, nystroem_features
 
 
 def generate_bof(mirrored_features, centroids, start_idxs, end_idxs):
