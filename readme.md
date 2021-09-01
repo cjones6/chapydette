@@ -66,7 +66,7 @@ If you use this code in your work please cite one of the following papers:
 }
 ```
 
-- C. Jones, S. Clayton, F. Ribalet, E.V. Armbrust, and Z. Harchaoui. [A Kernel-Based Change Detection Method to Map Shifts in Phytoplankton Communities Measured by Flow Cytometry](https://besjournals.onlinelibrary.wiley.com/doi/abs/10.1111/2041-210X.13647). *Methods in Ecology and Evolution*, 12, 1687–1698. https://doi.org/10.1111/2041-210X.13647
+- C. Jones, S. Clayton, F. Ribalet, E.V. Armbrust, and Z. Harchaoui. A Kernel-Based Change Detection Method to Map Shifts in Phytoplankton Communities Measured by Flow Cytometry. *Methods in Ecology and Evolution*, 12, 1687–1698. https://doi.org/10.1111/2041-210X.13647
 ```
 @article{JCRAH2021,
 author = {Jones, Corinne and Clayton, Sophie and Ribalet, François and Armbrust, E. Virginia and Harchaoui, Zaid},
