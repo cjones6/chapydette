@@ -66,16 +66,17 @@ If you use this code in your work please cite one of the following papers:
 }
 ```
 
-- C. Jones, S. Clayton, F. Ribalet, E.V. Armbrust, and Z. Harchaoui. [A Kernel-Based Change Detection Method to Map Shifts in Phytoplankton Communities Measured by Flow Cytometry](https://www.biorxiv.org/content/early/2020/12/02/2020.12.01.405126). bioRxiv, 2020. 
+- C. Jones, S. Clayton, F. Ribalet, E.V. Armbrust, and Z. Harchaoui. [A Kernel-Based Change Detection Method to Map Shifts in Phytoplankton Communities Measured by Flow Cytometry](https://besjournals.onlinelibrary.wiley.com/doi/abs/10.1111/2041-210X.13647). *Methods in Ecology and Evolution*, 12, 1687–1698. https://doi.org/10.1111/2041-210X.13647
 ```
-@article {JCRAH2020,
-	author       = {Jones, Corinne and Clayton, Sophie and Ribalet, Fran{\c c}ois and Armbrust, E. Virginia and Harchaoui, Zaid},
-	title        = {A Kernel-Based Change Detection Method to Map Shifts in Phytoplankton Communities Measured by Flow Cytometry},
-	elocation-id = {2020.12.01.405126},
-	year         = {2020},
-	doi          = {10.1101/2020.12.01.405126},
-	publisher    = {Cold Spring Harbor Laboratory},
-	journal      = {bioRxiv}
+@article{JCRAH2021,
+author = {Jones, Corinne and Clayton, Sophie and Ribalet, François and Armbrust, E. Virginia and Harchaoui, Zaid},
+title = {A kernel-based change detection method to map shifts in phytoplankton communities measured by flow cytometry},
+journal = {Methods in Ecology and Evolution},
+volume = {12},
+number = {9},
+pages = {1687-1698},
+doi = {https://doi.org/10.1111/2041-210X.13647},
+year = {2021}
 }
 ```
 
